@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { AppService } from './app.service';
 
 @Controller()
@@ -15,10 +15,26 @@ export class AppController {
     return "I'm new endpoint";
   }
 
+  @Get('products')
+  getProducts(
+    @Query('limit') limit = 100,
+    @Query('offset') offset = 0,
+    @Query('brand') brand: string,
+  ) {
+    return `Products from ${offset} to ${limit}. Brand ${brand}`;
+  }
+
   // Recibir un parámetro
   @Get('products/:productId')
   getProduct(@Param('productId') productId: any) {
     return `Product ${productId}`;
+  }
+
+  // Rutas no dinámicas fan al final
+  // De lo contrario chocarían, por ejemplo con el método anterior
+  @Get('products/filter')
+  getProductFilter() {
+    return `Im a filter`;
   }
 
   // Recibir más de un parámetro
