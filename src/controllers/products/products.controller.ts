@@ -3,15 +3,20 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   Post,
   Put,
   Query,
+  Res,
 } from '@nestjs/common';
+import { Response } from 'express';
 
 @Controller('products')
 export class ProductsController {
   @Get()
+  @HttpCode(HttpStatus.ACCEPTED)
   getProducts(
     @Query('limit') limit = 100,
     @Query('offset') offset = 0,
@@ -22,8 +27,10 @@ export class ProductsController {
 
   // Recibir un parámetro
   @Get(':productId')
-  getProduct(@Param('productId') productId: any) {
-    return { message: `Product ${productId}` };
+  getProduct(@Res() response: Response, @Param('productId') productId: any) {
+    response.status(200).send({
+      message: `Product ${productId}`,
+    });
   }
 
   // Rutas no dinámicas fan al final
