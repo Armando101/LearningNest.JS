@@ -12,9 +12,12 @@ import {
   Res,
 } from '@nestjs/common';
 import { Response } from 'express';
+import { ProductsService } from 'src/services/products/products.service';
 
 @Controller('products')
 export class ProductsController {
+  constructor(private productService: ProductsService) {}
+
   @Get()
   @HttpCode(HttpStatus.ACCEPTED)
   getProducts(
@@ -22,15 +25,17 @@ export class ProductsController {
     @Query('offset') offset = 0,
     @Query('brand') brand: string,
   ) {
-    return { message: `Products from ${offset} to ${limit}. Brand ${brand}` };
+    return this.productService.findAll();
   }
 
   // Recibir un parámetro
   @Get(':productId')
-  getProduct(@Res() response: Response, @Param('productId') productId: any) {
-    response.status(200).send({
-      message: `Product ${productId}`,
-    });
+  getProduct(@Param('productId') productId: any) {
+    // getProduct(@Res() response: Response, @Param('productId') productId: any) {
+    // response.status(200).send({
+    //   message: `Product ${productId}`,
+    // });
+    return this.productService.findOne(+productId);
   }
 
   // Rutas no dinámicas fan al final
@@ -42,18 +47,20 @@ export class ProductsController {
 
   @Post()
   create(@Body() payload: any) {
-    return {
-      message: 'Acción para crear recursos',
-      payload,
-    };
+    // return {
+    //   message: 'Acción para crear recursos',
+    //   payload,
+    // };
+    return this.productService.create(payload);
   }
 
   @Put(':id')
   update(@Param('id') id: number, @Body() payload: any) {
-    return {
-      id,
-      payload,
-    };
+    // return {
+    //   id,
+    //   payload,
+    // };
+    return this.productService.update(+id, payload);
   }
 
   @Delete(':id')
