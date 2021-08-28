@@ -6,12 +6,11 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  ParseIntPipe,
   Post,
   Put,
   Query,
-  Res,
 } from '@nestjs/common';
-import { Response } from 'express';
 import { ProductsService } from 'src/services/products/products.service';
 
 @Controller('products')
@@ -30,12 +29,8 @@ export class ProductsController {
 
   // Recibir un parámetro
   @Get(':productId')
-  getProduct(@Param('productId') productId: any) {
-    // getProduct(@Res() response: Response, @Param('productId') productId: any) {
-    // response.status(200).send({
-    //   message: `Product ${productId}`,
-    // });
-    return this.productService.findOne(+productId);
+  getProduct(@Param('productId', ParseIntPipe) productId: any) {
+    return this.productService.findOne(productId);
   }
 
   // Rutas no dinámicas fan al final
@@ -47,24 +42,16 @@ export class ProductsController {
 
   @Post()
   create(@Body() payload: any) {
-    // return {
-    //   message: 'Acción para crear recursos',
-    //   payload,
-    // };
     return this.productService.create(payload);
   }
 
   @Put(':id')
-  update(@Param('id') id: number, @Body() payload: any) {
-    // return {
-    //   id,
-    //   payload,
-    // };
-    return this.productService.update(+id, payload);
+  update(@Param('id', ParseIntPipe) id: number, @Body() payload: any) {
+    return this.productService.update(id, payload);
   }
 
   @Delete(':id')
-  delete(@Param('id') id: number) {
-    return this.productService.delete(+id);
+  delete(@Param('id', ParseIntPipe) id: number) {
+    return this.productService.delete(id);
   }
 }
